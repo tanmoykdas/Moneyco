@@ -107,20 +107,20 @@ Moneyco is structured following **Clean Architecture** and the **Repository Patt
 ```mermaid
 flowchart TD
     subgraph UI ["Presentation Layer (Flutter)"]
-        UI_Screens["Screens\n(Home, AddTransaction, Chart, Profile, Login)"]
-        UI_Widgets["Reusable Widgets\n(BalanceCard, ChartWidget, Shimmer, TransactionTile)"]
+        UI_Screens["Screens (Home, AddTransaction, Chart, Profile, Login)"]
+        UI_Widgets["Reusable Widgets (BalanceCard, ChartWidget, Shimmer, TransactionTile)"]
     end
 
     subgraph StateManagement ["State Management Layer (Provider)"]
-        AP["AuthProvider\n(Google Sign-In / Sign-Out)"]
-        TP["TransactionProvider\n(Transactions, Budgets, Analytics)"]
-        ThP["ThemeProvider\n(Dark / Light Preference)"]
-        CP["ConnectivityProvider\n(Network State)"]
+        AP["AuthProvider (Google Sign-In / Sign-Out)"]
+        TP["TransactionProvider (Transactions, Budgets, Analytics)"]
+        ThP["ThemeProvider (Dark / Light Preference)"]
+        CP["ConnectivityProvider (Network State)"]
         AP -->|Proxy Updates| TP
     end
 
     subgraph Domain ["Domain Layer"]
-        TR_Interface["<<interface>>\nTransactionRepository"]
+        TR_Interface["TransactionRepository (Interface)"]
         M_Tx["TransactionModel"]
         M_Analytics["TransactionAnalytics"]
         M_Budget["BudgetSettings"]
@@ -129,16 +129,17 @@ flowchart TD
     subgraph Data ["Data & Infrastructure Layer"]
         LTR["LocalTransactionRepository"]
         FTR["FirestoreTransactionRepository"]
-        LS_Local["LocalStorageService\n(SharedPreferences / Secure Storage)"]
-        FS_Remote["FirestoreService\n(Cloud Firestore)"]
-        NS_Notify["NotificationService\n(In-App Alerts)"]
+        LS_Local["LocalStorageService (SharedPreferences / Secure Storage)"]
+        FS_Remote["FirestoreService (Cloud Firestore)"]
+        NS_Notify["NotificationService (In-App Alerts)"]
     end
 
-    UI_Screens --> StateManagement
-    UI_Widgets --> StateManagement
+    UI_Screens --> TP
+    UI_Screens --> AP
+    UI_Widgets --> TP
     TP --> TR_Interface
-    TR_Interface <|.. LTR
-    TR_Interface <|.. FTR
+    LTR -.->|implements| TR_Interface
+    FTR -.->|implements| TR_Interface
     LTR --> LS_Local
     FTR --> FS_Remote
     TP --> NS_Notify
